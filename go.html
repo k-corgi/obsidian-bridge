@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Obsidian へ移動中...</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #e4e4e7;
+    }
+    .container { text-align: center; padding: 2rem; max-width: 400px; }
+    .icon { font-size: 4rem; margin-bottom: 1.5rem; animation: pulse 2s ease-in-out infinite; }
+    @keyframes pulse { 0%, 100% { opacity: 1; transform: scale(1); } 50% { opacity: 0.7; transform: scale(0.95); } }
+    h1 { font-size: 1.5rem; font-weight: 600; margin-bottom: 0.5rem; color: #f4f4f5; }
+    .status { font-size: 0.95rem; color: #a1a1aa; margin-bottom: 2rem; }
+    .open-button {
+      display: inline-block; padding: 0.875rem 2rem;
+      background: linear-gradient(135deg, #7c3aed 0%, #8b5cf6 100%);
+      color: white; text-decoration: none; border-radius: 12px;
+      font-size: 1rem; font-weight: 600; transition: all 0.2s ease;
+      box-shadow: 0 4px 14px rgba(124, 58, 237, 0.4);
+    }
+    .open-button:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(124, 58, 237, 0.5); }
+    .hint { margin-top: 2rem; font-size: 0.8rem; color: #71717a; line-height: 1.6; }
+    .hidden { display: none; }
+    .fallback-container { animation: fadeIn 0.5s ease-out; }
+    @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div id="loading">
+      <div class="icon">📖</div>
+      <h1>Obsidian へ移動中...</h1>
+      <p class="status">自動で開かない場合は下のボタンをタップ</p>
+    </div>
+    <div id="fallback" class="fallback-container hidden">
+      <div class="icon">📖</div>
+      <h1>Obsidian を開く</h1>
+      <p class="status">ボタンをタップしてノートを開きます</p>
+      <a id="openButton" class="open-button" href="#">Open in Obsidian</a>
+      <p class="hint">開かない場合は「共有」→「Safari で開く」を試してください</p>
+    </div>
+  </div>
+  <script>
+    (function() {
+      const params = new URLSearchParams(window.location.search);
+      const obsidianUri = params.get('u');
+      if (!obsidianUri) {
+        document.getElementById('loading').innerHTML = '<div class="icon">❌</div><h1>エラー</h1><p class="status">リンクが無効です</p>';
+        return;
+      }
+      document.getElementById('openButton').href = obsidianUri;
+      try { window.location.href = obsidianUri; } catch (e) { console.log('redirect failed:', e); }
+      setTimeout(function() {
+        document.getElementById('loading').classList.add('hidden');
+        document.getElementById('fallback').classList.remove('hidden');
+      }, 1500);
+    })();
+  </script>
+</body>
+</html>
